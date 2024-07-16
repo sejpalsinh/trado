@@ -359,33 +359,64 @@
 						<h4 class="title m-t0">Get a Call Back</h4>
 						<p>Fill out the below form and we will contact you ASAP</p>
 					</div>
-					<form method="POST" class="dz-form" action="pricing">
+					<form method="post" class="dz-form" action="send_email.php" id="contactForm" >
 						<div class="form-wrapper">
 							<div class="flex-1">
 								<div class="row g-3">
 									<div class="col-xl-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-										<input name="Name" type="name" required="" placeholder="Full Name" class="form-control">
+										<input name="Name" id="Name" type="name" required="" placeholder="Full Name" class="form-control">
 									</div>
 									<div class="col-xl-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-										<input name="Email" type="dzEmail" required="" placeholder="Email Address" class="form-control">
+										<input name="Email" id="Email" type="dzEmail" required="" placeholder="Email Address" class="form-control">
 									</div>
 									<div class="col-xl-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-										<input name="Mobile" type="dzPhoneNumber" required="" placeholder="Mobile No." class="form-control">
+										<input name="Mobile" id="Mobile" type="dzPhoneNumber" required="" placeholder="Mobile No." class="form-control">
 									</div>
 									<div class="col-xl-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-										<input name="Message" type="dzMessage" required="" placeholder="Message" class="form-control">
+										<input name="Message" id="Message" type="dzMessage" required="" placeholder="Message" class="form-control">
 									</div>
 								</div>
 							</div>
-							<input type="submit" name="submit" class="btn btn-lg btn-gradient btn-primary btn-shadow" style="background-color:white;color:#0a53b5;">
+							<input type="submit" id="submitForm" name="submit" class="btn btn-lg btn-gradient btn-primary btn-shadow" style="background-color:white;color:#0a53b5;">
 						</div>
+						<div class="d-flex justify-content-end" style="color:white" id="msgSubmit"></div>
+                        <div class="clearfix"></div>
 						<script>
-                           form.addEventListener('submit', e => {
-                            e.preventDefault()
-                             .then(response => alert("Thanks for Contacting us..! We Will Contact You Soon..."))
-                             .catch(error => console.error('Error!', error.message))
-                                })
-                     </script>
+                                                document.getElementById('contactForm').addEventListener('submit', function(event) {
+                                                    event.preventDefault(); // Prevent the default form submission
+
+                                                    var form = document.getElementById('contactForm');
+                                                    var formData = new FormData(form);
+                                                    
+                                                    var xhr = new XMLHttpRequest();
+                                                    xhr.open('POST', 'send_email.php', true);
+                                                    xhr.onload = function() {
+                                                        if (xhr.status >= 200 && xhr.status < 400) {
+                                                            document.getElementById('msgSubmit').innerHTML = xhr.responseText;
+                                                            form.reset(); // Clear the form on successful submission
+                                                            setTimeout(function() {
+                                                                document.getElementById('msgSubmit').innerHTML = '';
+                                                            }, 3000); // Hide message after 3 seconds
+                                                        } else {
+                                                            document.getElementById('msgSubmit').innerHTML = 'Failed to send email.';
+                                                            setTimeout(function() {
+                                                                document.getElementById('msgSubmit').innerHTML = '';
+                                                            }, 3000); // Hide message after 3 seconds
+                                                            console.error('Request failed: ' + xhr.statusText);
+                                                        }
+                                                    };
+                                                    
+                                                    xhr.onerror = function() {
+                                                        document.getElementById('msgSubmit').innerHTML = 'Request failed.';
+                                                        setTimeout(function() {
+                                                            document.getElementById('msgSubmit').innerHTML = '';
+                                                        }, 3000); // Hide message after 3 seconds
+                                                        console.error('Request failed');
+                                                    };
+
+                                                    xhr.send(formData);
+                                                });
+                                            </script>
 					</form>
 				</div>
 			</div>
